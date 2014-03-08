@@ -1,0 +1,322 @@
+diff -ur nginx-1.5.10-d/src/http/ngx_http_special_response.c nginx-1.5.10/src/http/ngx_http_special_response.c
+--- nginx-1.5.10-d/src/http/ngx_http_special_response.c	2014-03-08 15:23:55.460169045 +0000
++++ nginx-1.5.10/src/http/ngx_http_special_response.c	2014-03-05 18:46:26.000000000 +0000
+@@ -19,26 +19,19 @@
+ 
+ 
+ static u_char ngx_http_error_full_tail[] =
+-"<hr><center>" NGINX_VER "</center>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+ 
+ 
+ static u_char ngx_http_error_tail[] =
+-"<hr><center>nginx</center>" CRLF
+ "</body>" CRLF
+ "</html>" CRLF
+ ;
+ 
+ 
+ static u_char ngx_http_msie_padding[] =
+-"<!-- a padding to disable MSIE and Chrome friendly error page -->" CRLF
+-"<!-- a padding to disable MSIE and Chrome friendly error page -->" CRLF
+-"<!-- a padding to disable MSIE and Chrome friendly error page -->" CRLF
+-"<!-- a padding to disable MSIE and Chrome friendly error page -->" CRLF
+-"<!-- a padding to disable MSIE and Chrome friendly error page -->" CRLF
+-"<!-- a padding to disable MSIE and Chrome friendly error page -->" CRLF
++"" CRLF
+ ;
+ 
+ 
+@@ -83,66 +76,66 @@
+ 
+ 
+ static char ngx_http_error_400_page[] =
+-"<html>" CRLF
+-"<head><title>400 Bad Request</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>400 Bad Request</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>400 - Bad Request</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>400 - Bad Request</h2><h3>Your browser sent a request that this server could not understand.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_401_page[] =
+-"<html>" CRLF
+-"<head><title>401 Authorization Required</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>401 Authorization Required</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>401 - Unauthorized: Access is denied due to invalid credentials.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>401 - Unauthorized: Access is denied due to invalid credentials.</h2><h3>You do not have permission to view this directory or page using the credentials that you supplied.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_402_page[] =
+-"<html>" CRLF
+-"<head><title>402 Payment Required</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>402 Payment Required</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>402 - Payment Required.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Your Fault</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>402 - Payment Required.</h2><h3>You break it, you buy it.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_403_page[] =
+-"<html>" CRLF
+-"<head><title>403 Forbidden</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>403 Forbidden</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>403 - Forbidden: Access is denied.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>403 - Forbidden: Access is denied.</h2><h3>You do not have permission to view this directory or page using the credentials that you supplied.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_404_page[] =
+-"<html>" CRLF
+-"<head><title>404 Not Found</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>404 Not Found</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>404 - File or directory not found.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>404 - File or directory not found.</h2><h3>The resource you are looking for might have been removed, had its name changed, or is temporarily unavailable.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_405_page[] =
+-"<html>" CRLF
+-"<head><title>405 Not Allowed</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>405 Not Allowed</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>405 - HTTP verb used to access this page is not allowed.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>405 - HTTP verb used to access this page is not allowed.</h2><h3>The page you are looking for cannot be displayed because an invalid method (HTTP verb) was used to attempt access.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_406_page[] =
+-"<html>" CRLF
+-"<head><title>406 Not Acceptable</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>406 Not Acceptable</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>406 - Client browser does not accept the MIME type of the requested page.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>406 - Client browser does not accept the MIME type of the requested page.</h2><h3>The page you are looking for cannot be opened by your browser because it has a file name extension that your browser does not accept.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_408_page[] =
+-"<html>" CRLF
+-"<head><title>408 Request Time-out</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>408 Request Time-out</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>408 - Request Time-out.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>408 - Request Time-out.</h2><h3>Server timeout waiting for the HTTP request from the client.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+@@ -155,58 +148,58 @@
+ 
+ 
+ static char ngx_http_error_410_page[] =
+-"<html>" CRLF
+-"<head><title>410 Gone</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>410 Gone</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>410 - Gone.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>410 - Gone.</h2><h3>The requested resource is no longer available on this server and there is no forwarding address. Please remove all references to this resource.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_411_page[] =
+-"<html>" CRLF
+-"<head><title>411 Length Required</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>411 Length Required</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>411 - Length Required.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>411 - Length Required.</h2><h3>A request of the requested method GET requires a valid Content-length.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_412_page[] =
+-"<html>" CRLF
+-"<head><title>412 Precondition Failed</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>412 Precondition Failed</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>412 - Precondition set by the client failed when evaluated on the Web server.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>412 - Precondition set by the client failed when evaluated on the Web server.</h2><h3>The request was not completed due to preconditions that are set in the request header. Preconditions prevent the requested method from being applied to a resource other than the one intended. An example of a precondition is testing for expired content in the page cache of the client.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_413_page[] =
+-"<html>" CRLF
+-"<head><title>413 Request Entity Too Large</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>413 Request Entity Too Large</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>413 - Request Entity Too Large.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>413 - Request Entity Too Large.</h2><h3>The requested resource does not allow request data with GET requests, or the amount of data provided in the request exceeds the capacity limit.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_414_page[] =
+-"<html>" CRLF
+-"<head><title>414 Request-URI Too Large</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>414 Request-URI Too Large</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>414 - Request-URI Too Large.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>414 - Request-URI Too Large.</h2><h3>The requested URL's length exceeds the capacity limit for this server.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_415_page[] =
+-"<html>" CRLF
+-"<head><title>415 Unsupported Media Type</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>415 Unsupported Media Type</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>415 - Unsupported Media Type.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>415 - Unsupported Media Type.</h2><h3>The request did not specify any media types that the server or resource supports. For example the client specified that an image resource should be served as image/svg+xml, but the server cannot find a matching version of the image.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_416_page[] =
+-"<html>" CRLF
+-"<head><title>416 Requested Range Not Satisfiable</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>416 Requested Range Not Satisfiable</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>416 - Requested Range Not Satisfiable.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>416 - Requested Range Not Satisfiable.</h2><h3>The client has asked for a portion of the file, but the server cannot supply that portion (for example, if the client asked for a part of the file that lies beyond the end of the file).</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+@@ -221,72 +214,66 @@
+ 
+ 
+ static char ngx_http_error_495_page[] =
+-"<html>" CRLF
+-"<head><title>400 The SSL certificate error</title></head>"
+-CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>400 Bad Request</h1></center>" CRLF
+-"<center>The SSL certificate error</center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>403.16 - Forbidden: Client certificate is ill-formed or is not trusted by the Web server.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>403.16 - Forbidden: Client certificate is ill-formed or is not trusted by the Web server.</h2><h3>Your client certificate is untrusted or invalid. A Secure Sockets Layer (SSL) client certificate is used for identifying you as a valid user of the resource.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_496_page[] =
+-"<html>" CRLF
+-"<head><title>400 No required SSL certificate was sent</title></head>"
+-CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>400 Bad Request</h1></center>" CRLF
+-"<center>No required SSL certificate was sent</center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>403.7 - Forbidden: SSL client certificate is required.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>403.7 - Forbidden: SSL client certificate is required.</h2><h3>The page you are attempting to access requires your browser to have a Secure Sockets Layer (SSL) client certificate that the Web server will recognize. The client certificate is used for identifying you as a valid user of the resource.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_497_page[] =
+-"<html>" CRLF
+-"<head><title>400 The plain HTTP request was sent to HTTPS port</title></head>"
+-CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>400 Bad Request</h1></center>" CRLF
+-"<center>The plain HTTP request was sent to HTTPS port</center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>403.4 - Forbidden: SSL is required to view this resource.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>403.4 - Forbidden: SSL is required to view this resource.</h2><h3>The page you are trying to access is secured with Secure Sockets Layer (SSL).</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_500_page[] =
+-"<html>" CRLF
+-"<head><title>500 Internal Server Error</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>500 Internal Server Error</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>500 - Internal server error.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>500 - Internal server error.</h2><h3>There is a problem with the resource you are looking for, and it cannot be displayed.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_501_page[] =
+-"<html>" CRLF
+-"<head><title>501 Not Implemented</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>501 Not Implemented</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>501 - Header values specify a method that is not implemented.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>501 - Header values specify a method that is not implemented.</h2><h3>The page you are looking for cannot be displayed because a header value in the request does not match certain configuration settings on the Web server. For example, a request header might specify a POST to a static file that cannot be posted to, or specify a Transfer-Encoding value that cannot make use of compression.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_502_page[] =
+-"<html>" CRLF
+-"<head><title>502 Bad Gateway</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>502 Bad Gateway</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>502 - Web server received an invalid response while acting as a gateway or proxy server.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>502 - Web server received an invalid response while acting as a gateway or proxy server.</h2><h3>There is a problem with the page you are looking for, and it cannot be displayed. When the Web server (while acting as a gateway or proxy) contacted the upstream content server, it received an invalid response from the content server.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_503_page[] =
+-"<html>" CRLF
+-"<head><title>503 Service Temporarily Unavailable</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>503 Service Temporarily Unavailable</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>503 - Web server is too busy.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>503 - Web server is too busy.</h2><h3>The request cannot be processed at this time. The amount of traffic exceeds the Web site's configured capacity.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
+ static char ngx_http_error_504_page[] =
+-"<html>" CRLF
+-"<head><title>504 Gateway Time-out</title></head>" CRLF
+-"<body bgcolor=\"white\">" CRLF
+-"<center><h1>504 Gateway Time-out</h1></center>" CRLF
++"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" CRLF
++"<html xmlns=\"http://www.w3.org/1999/xhtml\">" CRLF
++"<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\"/><title>504 - Gateway Timeout.</title></head><style type=\"text/css\"><!--body{margin:0;font-size:.7em;font-family:Verdana, Arial, Helvetica, sans-serif;background:#EEEEEE;}fieldset{padding:0 15px 10px 15px;} h1{font-size:2.4em;margin:0;color:#FFF;}h2{font-size:1.7em;margin:0;color:#CC0000;} h3{font-size:1.2em;margin:10px 0 0 0;color:#000000;} #header{width:96%;margin:0 0 0 0;padding:6px 2% 6px 2%;font-family:\"trebuchet MS\", Verdana, sans-serif;color:#FFF;background-color:#555555;}#content{margin:0 0 0 2%;position:relative;}.content-container{background:#FFF;width:96%;margin-top:8px;padding:10px;position:relative;}--></style>" CRLF
++"<body><div id=\"header\"><h1>Server Error</h1></div><div id=\"content\"><div class=\"content-container\"><fieldset><h2>504 - Gateway Timeout.</h2><h3>The request cannot be processed at this time. The server was acting as a gateway or proxy and did not receive a timely request from the upstream server.</h3></fieldset></div></div>" CRLF
+ ;
+ 
+ 
