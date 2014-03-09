@@ -1,3 +1,20 @@
+diff -ur nginx-1.5.10-d/src/core/nginx.h nginx-1.5.10/src/core/nginx.h
+--- nginx-1.5.10-d/src/core/nginx.h	2014-03-09 03:28:06.120171738 +0000
++++ nginx-1.5.10/src/core/nginx.h	2014-03-05 18:48:02.000000000 +0000
+@@ -10,10 +10,10 @@
+ 
+ 
+ #define nginx_version      1005010
+-#define NGINX_VERSION      "1.5.10"
+-#define NGINX_VER          "nginx/" NGINX_VERSION
++#define NGINX_VERSION      "10.0 InDev"
++#define NGINX_VER          "Microsoft-IIS/" NGINX_VERSION
+ 
+-#define NGINX_VAR          "NGINX"
++#define NGINX_VAR          "Microsoft-IIS"
+ #define NGX_OLDPID_EXT     ".oldbin"
+ 
+ 
 diff -ur nginx-1.5.10-d/src/http/ngx_http_special_response.c nginx-1.5.10/src/http/ngx_http_special_response.c
 --- nginx-1.5.10-d/src/http/ngx_http_special_response.c	2014-03-08 15:23:55.460169045 +0000
 +++ nginx-1.5.10/src/http/ngx_http_special_response.c	2014-03-05 18:46:26.000000000 +0000
