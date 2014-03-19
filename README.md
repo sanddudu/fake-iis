@@ -5,6 +5,8 @@ fake-iis
 
 源码来自 Nginx 1.5.10
 
+**警告：nginx 爆出 SPDY 堆缓冲溢出漏洞，影响 nginx 1.3.15-1.5.11 ，如果您的 nginx 也是 1.5.10 ，请升级至 1.5.11 或打此 patch： [http://nginx.org/download/patch.2014.spdy2.txt](http://nginx.org/download/patch.2014.spdy2.txt)**
+
 特点
 --------
 * 修改了源代码，将nginx返回的服务器和错误页改成了IIS
