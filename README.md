@@ -22,7 +22,7 @@ fake-iis
 * 更高或更低版本：将相关文件进行比对后替换相应部分代码，然后 `make` ，备份好原来的 nginx 文件，将 `objs` 文件夹里的 `nginx` 和 `html` 文件夹里的 `index.html` （可选） 拷贝到 nginx 安装目录下
 
 ###通过patch安装
-* 同版本：将patch文件放到源代码文件夹中，执行`patch -p1 fake-iis.patch` ，然后自行选择全新安装还是替换安装，最后将 `html` 文件夹里的 `index.html` （可选） 拷贝到 nginx 安装目录下
+* 同版本：将patch文件放到源代码文件夹中，执行`patch -p1 < fake-iis.patch` ，然后自行选择全新安装还是替换安装，最后将 `html` 文件夹里的 `index.html` （可选） 拷贝到 nginx 安装目录下
 * 不同版本不推荐使用该方法安装，步骤与同版本相同
 
 许可证
